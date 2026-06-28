@@ -30,7 +30,7 @@ pipeline {
         stage('Package Artifact') {
             steps {
                 sh 'mvn package -DskipTests'
-                // Safely catch whatever jar name maven generated and copy it to a predictable name
+                // Wildcard safety: copies whatever versioned jar maven creates into a clean app.jar
                 sh 'cp target/twitter-app-*.jar target/app.jar'
             }
         }
@@ -45,7 +45,7 @@ pipeline {
                         groupId: 'com.example', 
                         version: '1.0.0', 
                         repository: 'blogging-app-repo',
-                        credentialsId: '', 
+                        credentialsId: 'nexus-credentials', 
                         artifacts: [
                             [artifactId: 'twitter-app', extension: 'jar', classifier: '', file: 'target/app.jar']
                         ]
