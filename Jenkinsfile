@@ -36,22 +36,26 @@ pipeline {
         }
 
         stage('Upload to Nexus') {
-            steps {
-                script {
-                    nexusArtifactUploader(
-                        nexusVersion: 'nexus3',
-                        protocol: 'http',
-                        nexusUrl: '32.199.170.32:8081',
-                        groupId: 'com.example', 
-                        version: '1.0.0', 
-                        repository: 'blogging-app-repo',
-                        credentialsId: 'nexus-credentials', 
-                        artifacts: [
-                            [artifactId: 'twitter-app', extension: 'jar', classifier: '', file: 'target/app.jar']
-                        ]
-                    )
+                    steps {
+                        script {
+                            nexusArtifactUploader(
+                                nexusVersion: 'nexus3',
+                                protocol: 'http',
+                                nexusUrl: '32.199.170.32:8081',
+                                groupId: 'com.example', 
+                                version: '1.0.0', 
+                                repository: 'blogging-app-repo',
+                                credentialsId: 'nexus-credentials', 
+                                artifacts: [
+                                    [
+                                        artifactId: 'twitter-app', 
+                                        type: 'jar',         // Added type explicitly
+                                        extension: 'jar', 
+                                        classifier: '', 
+                                        file: 'target/app.jar'
+                                    ]
+                                ]
+                            )
+                        }
+                    }
                 }
-            }
-        }
-    }
-}
