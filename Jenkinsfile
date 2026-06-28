@@ -37,7 +37,6 @@ pipeline {
 
         stage('Package Artifact') {
             steps {
-                // Just let Maven build the clean versioned jar file alone
                 sh 'mvn package -DskipTests'
             }
         }
@@ -45,15 +44,12 @@ pipeline {
         stage('Upload to Nexus') {
             steps {
                 script {
-                    // Dynamically grab the exact jar path for the Nexus uploader stage
-                    def jarFile = findFiles(glob: 'target/twitter-app-*.jar')[0]
-                    
                     nexusArtifactUploader(
                         nexusVersion: 'nexus3',
                         protocol: 'http',
                         nexusUrl: '32.199.170.32:8081',
                         groupId: 'com.example', 
-                        version: '1.0.0', 
+                        version: '0.0.3', // Matched exactly to your pom.xml version
                         repository: 'blogging-app-repo',
                         credentialsId: 'nexus-credentials', 
                         artifacts: [
@@ -62,7 +58,7 @@ pipeline {
                                 type: 'jar',
                                 extension: 'jar', 
                                 classifier: '', 
-                                file: "${jarFile.path}"
+                                file: 'target/twitter-app-0.0.3.jar' // Exact file path matched from logs
                             ]
                         ]
                     )
