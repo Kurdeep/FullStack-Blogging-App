@@ -30,32 +30,34 @@ pipeline {
         stage('Package Artifact') {
             steps {
                 sh 'mvn package -DskipTests'
-                // Wildcard safety: copies whatever versioned jar maven creates into a clean app.jar
+                // Safely catch whatever versioned jar maven creates and copy it to a clean app.jar
                 sh 'cp target/twitter-app-*.jar target/app.jar'
             }
         }
 
         stage('Upload to Nexus') {
-                    steps {
-                        script {
-                            nexusArtifactUploader(
-                                nexusVersion: 'nexus3',
-                                protocol: 'http',
-                                nexusUrl: '32.199.170.32:8081',
-                                groupId: 'com.example', 
-                                version: '1.0.0', 
-                                repository: 'blogging-app-repo',
-                                credentialsId: 'nexus-credentials', 
-                                artifacts: [
-                                    [
-                                        artifactId: 'twitter-app', 
-                                        type: 'jar',         // Added type explicitly
-                                        extension: 'jar', 
-                                        classifier: '', 
-                                        file: 'target/app.jar'
-                                    ]
-                                ]
-                            )
-                        }
-                    }
+            steps {
+                script {
+                    nexusArtifactUploader(
+                        nexusVersion: 'nexus3',
+                        protocol: 'http',
+                        nexusUrl: '32.199.170.32:8081',
+                        groupId: 'com.example', 
+                        version: '1.0.0', 
+                        repository: 'blogging-app-repo',
+                        credentialsId: 'nexus-credentials', 
+                        artifacts: [
+                            [
+                                artifactId: 'twitter-app', 
+                                type: 'jar',
+                                extension: 'jar', 
+                                classifier: '', 
+                                file: 'target/app.jar'
+                            ]
+                        ]
+                    )
                 }
+            }
+        }
+    }
+}
